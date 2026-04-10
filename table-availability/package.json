@@ -1,12 +1,19 @@
 {
-  "name": "table-availability",
-  "module": "index.ts",
-  "type": "module",
-  "private": true,
-  "devDependencies": {
-    "@types/bun": "latest"
-  },
-  "peerDependencies": {
-    "typescript": "^5"
-  }
+    "name": "table-service",
+    "module": "index.ts",
+    "type": "module",
+    "private": true,
+    "scripts": {
+        "start": "bun run src/server.ts",
+        "clean": "rm -rf dist && echo 'Done.'",
+        "dev": "bun src/server.ts",
+        "watch": "bun --watch src/server.ts",
+        "build": "bun build src/server.ts --production --outdir=dist --target=bun"
+    },
+    "devDependencies": {
+        "@types/bun": "latest"
+    },
+    "peerDependencies": {
+        "typescript": "^5"
+    }
 }
