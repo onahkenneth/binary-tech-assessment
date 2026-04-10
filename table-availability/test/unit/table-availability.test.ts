@@ -1,5 +1,5 @@
 import { test, expect } from "bun:test";
-import { TableRepository } from "~/model/TableRepository";
+import { TableRepository } from "~/src/model/TableRepository";
 
 /**
  * Unit Tests — Pure Functions
@@ -16,7 +16,7 @@ import { TableRepository } from "~/model/TableRepository";
  */
 
 function getTableRepository() {
-    return new TableRepository();
+    return TableRepository.getInstance();
 }
 
 test.concurrent("get requested table details", async () => {
