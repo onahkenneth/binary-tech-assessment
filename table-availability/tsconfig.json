@@ -1,5 +1,6 @@
 {
   "compilerOptions": {
+    "ignoreDeprecations": "6.0",
     // Environment setup & latest features
     "lib": ["ESNext"],
     "target": "ESNext",
@@ -7,6 +8,13 @@
     "moduleDetection": "force",
     "jsx": "react-jsx",
     "allowJs": true,
+    "types": ["bun"],
+    "baseUrl": ".",
+    "paths": {
+      "~/*": [
+        "src/*"
+      ]
+    },
 
     // Bundler mode
     "moduleResolution": "bundler",
