@@ -1,56 +1,35 @@
 import type { BunRequest } from 'bun';
 import index from '~/public/index.html';
-import { TableRepository } from "~/src/model/TableRepository";
+import { AvailabilityService } from './services/availability';
+import { fail, ok } from './helpers/responses';
+import { NotFoundError, ValidationError } from './helpers/error';
 
 export default {
     "/": index,
-    "/tables/:tableId": {
-        GET: async (req: BunRequest<"/tables/:tableId">) => {
-            const { tableId } = req.params
-            const table = await getTableRepository().getTable(tableId);
-
-            if (!table) {
-                return notFound()
-            }
-
-            return Response.json(
-                {
-                    success: true,
-                    data: table
-                }
-            );
+    "/tables": {
+        GET: async () => {
+            const result = await AvailabilityService.getInstance()
+                .getTables()
+            return ok(result);
         },
-        PUT: async (req: Request) => {
-            const body = await req.json() as { tableId: string; available: boolean };
-            const repo = getTableRepository();
-
-            const table = await repo.getTable(body.tableId);
-
-            if (!table) {
-                return notFound()
+        PUT: async (req: BunRequest) => {
+            try {
+                const result = await AvailabilityService.getInstance()
+                    .updateAvailability(req);
+                return ok(result);
+            } catch (error) {
+                if (error instanceof NotFoundError) return fail(error.message, 404);
+                if (error instanceof ValidationError) return fail(error.message, 400);
+                return fail("Unexpected error occurred", 500);
             }
-            
-            if (table) {
-                table.available = body.available;
-                repo.save(table);
-            }
-
-            return Response.json({ created: true, ...table });
         }
     },
-}
-
-function getTableRepository() {
-    return TableRepository.getInstance()
-}
-
-function notFound() {
-    return Response.json(
-        {
-            "error": "Table not found"
-        },
-        {
-            status: 404
+    "/tables/:tableId": {
+        GET: async (req: BunRequest<"/tables/:tableId">) => {
+            const { tableId } = req.params;
+            const result = await AvailabilityService.getInstance()
+                .getTable(tableId)
+            return ok(result);
         }
-    );
+    },
 }

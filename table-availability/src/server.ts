@@ -2,7 +2,7 @@ import { serve, type BunRequest } from 'bun';
 import routes from './routes';
 
 const server = serve({
-  port: 3000,
+  port: process.env.PORT || 3000,
   routes: routes,
   async fetch(req: BunRequest) {
     const url = new URL(req.url);

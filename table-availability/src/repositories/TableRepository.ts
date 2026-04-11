@@ -1,4 +1,4 @@
-import Table from "./Table";
+import type { Table } from "../types/model";
 
 export class TableRepository {
     private tables: Record<string, Table>;
@@ -6,10 +6,10 @@ export class TableRepository {
 
     constructor() {
         this.tables = {
-            T001: new Table("T001", 4, "Window", true),
-            T002: new Table("T002", 2, "Corner", false),
-            T003: new Table("T003", 6, "Center", true),
-            T004: new Table("T004", 8, "Balcony", false),
+            T001: { tableId: "T001", capacity: 4, location: "Window", available: true},
+            T002: { tableId: "T002", capacity: 2, location: "Corner", available: false},
+            T003: { tableId: "T003", capacity: 6, location: "Center", available: true},
+            T004: { tableId: "T004", capacity: 8, location: "Balcony", available: false},
         };
     }
 
