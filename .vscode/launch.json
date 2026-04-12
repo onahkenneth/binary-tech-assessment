@@ -1,0 +1,29 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+
+        {
+            "type": "bun",
+            "request": "launch",
+            "name": "Debug Reservations Service",
+            "program": "${workspaceFolder}/reservation/src/server.ts",
+            "cwd": "${workspaceFolder}/reservation",
+            "env": {},
+            "watchMode": false,
+            "stopOnEntry": false
+        },
+        {
+            "type": "bun",
+            "request": "launch",
+            "name": "Debug Table Availability Service",
+            "program": "${workspaceFolder}/table-availability/src/server.ts",
+            "cwd": "${workspaceFolder}/table-availability",
+            "env": {},
+            "watchMode": false,
+            "stopOnEntry": false
+        }
+    ]
+}
