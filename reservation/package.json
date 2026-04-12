@@ -1,12 +1,19 @@
 {
-  "name": "reservation",
-  "module": "index.ts",
-  "type": "module",
-  "private": true,
-  "devDependencies": {
-    "@types/bun": "latest"
-  },
-  "peerDependencies": {
-    "typescript": "^5"
-  }
+    "name": "reservation",
+    "module": "index.ts",
+    "devDependencies": {
+        "@types/bun": "latest"
+    },
+    "peerDependencies": {
+        "typescript": "^5"
+    },
+    "private": true,
+    "scripts": {
+        "start": "bun run src/server.ts",
+        "clean": "rm -rf dist && echo 'Done.'",
+        "dev": "bun src/server.ts",
+        "watch": "bun --watch run dev",
+        "build": "bun build src/server.ts --production --outdir=dist --target=bun"
+    },
+    "type": "module"
 }
