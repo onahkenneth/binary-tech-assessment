@@ -18,20 +18,21 @@ export enum StatusType {
 export type Reservation = {
     status: StatusType;
     tableId: string;
-    customerId: string
+    customerId: string;
     reservationId: string;
 }
 
 export interface CancelRequest {
     tableId: string;
-    reservationType: ReservationType
+    customerId: string;
+    reservationType: ReservationType;
 };
 
 export type CancelResponse = {
     status: StatusType;
     tableId: string;
-    customerId?: string
-    reservationId?: string
+    customerId?: string;
+    reservationId?: string;
 };
 
 export interface ReservationRequest extends CancelRequest {

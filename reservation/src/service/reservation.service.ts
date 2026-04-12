@@ -118,7 +118,19 @@ export class ReservationService {
 
     async cancelReservation(request: CancelRequest): Promise<CancelResponse> {
         let response: CancelResponse;
-        const { tableId } = request;
+        const { tableId, customerId } = request;
+        const reservation = await this.reservationRepository.getReservation(tableId);
+
+        if (!reservation) {
+            throw new NotFoundError(`No reservation for table: ${tableId} found`);
+        }
+
+        const isValid = await this.isReservationForCustomer(customerId, reservation);
+
+        if (!isValid) {
+            throw new NotFoundError(`No reservation for customer: ${customerId} found`);
+        }
+
         const result = await this.serviceClient.getTable(tableId);
 
         if (result.error) {
@@ -156,5 +168,9 @@ export class ReservationService {
         }
 
         return response;
+    }
+
+    async isReservationForCustomer(customerId: string, reservation: Reservation) {
+        return reservation.customerId === customerId;
     }
 }
