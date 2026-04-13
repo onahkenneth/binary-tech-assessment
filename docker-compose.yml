@@ -31,7 +31,7 @@ services:
     build:
       context: ./reservation
     ports:
-      - "3001:3001"
+      - "3001:3000"
     env_file:
       - ./reservation/.env.docker
     depends_on:
