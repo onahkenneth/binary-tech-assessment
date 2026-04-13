@@ -1,0 +1,43 @@
+services:
+  table-db:
+    image: postgres:16
+    env_file:
+      - ./table-availability/.env.docker
+    ports:
+      - "5432:5432"
+    volumes:
+      - table-db-data:/var/lib/postgresql/data
+
+  reservation-db:
+    image: postgres:16
+    env_file:
+      - ./reservation/.env.docker
+    ports:
+      - "5433:5432"
+    volumes:
+      - reservation-db-data:/var/lib/postgresql/data
+
+  table-service:
+    build:
+      context: ./table-availability
+    ports:
+      - "3000:3000"
+    env_file:
+      - ./table-availability/.env.docker
+    depends_on:
+      - table-db
+
+  reservation-service:
+    build:
+      context: ./reservation
+    ports:
+      - "3001:3001"
+    env_file:
+      - ./reservation/.env.docker
+    depends_on:
+      - reservation-db
+      - table-service
+
+volumes:
+  table-db-data:
+  reservation-db-data:
