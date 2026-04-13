@@ -1,5 +1,5 @@
 import { test, expect, mock, beforeEach, describe, beforeAll } from "bun:test";
-import { CustomerRepository } from "~/src/repositories/CustomerRepository";
+import { CustomerRepository } from "~/src/model/CustomerRepository";
 import {
     ReservationType,
     StatusType,

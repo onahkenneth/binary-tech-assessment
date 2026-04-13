@@ -1,15 +1,17 @@
-import { CustomerRepository } from "../repositories/CustomerRepository";
-import { ReservationRepository } from "../repositories/ReservationRepository";
+import { CustomerRepository } from "../model/CustomerRepository";
+import { ReservationRepository } from "../model/ReservationRepository";
 import { ReservationType, StatusType } from "../types/model";
 import type {
     CancelRequest,
     CancelResponse,
+    Customer,
     CustomerQueue,
     Reservation,
     ReservationRequest,
-    ReservationResponse
+    ReservationResponse,
+    WaitlistStore
 } from "../types/model";
-import { WaitlistRepository } from "../repositories/WaitlistRepository";
+import { WaitlistRepository } from "../model/WaitlistRepository";
 import { TableServiceClient } from "./table.service";
 import { NotFoundError, ValidationError } from "../helpers/error";
 
@@ -34,15 +36,15 @@ export class ReservationService {
         return ReservationService.instance;
     }
 
-    async getCustomers() {
+    async getCustomers(): Promise<Customer[]> {
         return this.customerRepository.getCustomers()
     }
 
-    async getWaitlists() {
+    async getWaitlists(): Promise<WaitlistStore[]> {
         return this.waitlistRepository.getWaitlists()
     }
 
-    async getReservations() {
+    async getReservations(): Promise<Reservation[]> {
         return this.reservationRepository.getReservations()
     }
 
@@ -89,10 +91,10 @@ export class ReservationService {
         }
 
         const table = result.data;
+        this.customerRepository.save({ customerId, name, email });
 
         if (table.available) {
             this.serviceClient.updateAvailability(tableId, false)
-            this.customerRepository.save({ customerId, name, email });
 
             const reservationId = crypto.randomUUID()
             const data = {
