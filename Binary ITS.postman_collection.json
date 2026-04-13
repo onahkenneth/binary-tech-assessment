@@ -1,0 +1,196 @@
+{
+  "info": {
+    "_postman_id": "84cec7b3-07e7-4a11-9340-6c6863004883",
+    "name": "Binary ITS",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "1188079"
+  },
+  "item": [
+    {
+      "name": "Table Availability Service",
+      "item": [
+        {
+          "name": "Get Tables",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{tableServiceUrl}}/tables",
+              "host": [
+                "{{tableServiceUrl}}"
+              ],
+              "path": [
+                "tables"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Table Details",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{tableServiceUrl}}/tables/T004",
+              "host": [
+                "{{tableServiceUrl}}"
+              ],
+              "path": [
+                "tables",
+                "T004"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Update Table Availability",
+          "request": {
+            "method": "PUT",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"tableId\": \"T001\",\n    \"available\": true\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{tableServiceUrl}}/tables",
+              "host": [
+                "{{tableServiceUrl}}"
+              ],
+              "path": [
+                "tables"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Reservation",
+      "item": [
+        {
+          "name": "Make Reservations",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"tableId\": \"T001\",\n    \"customerId\": \"C101\",\n    \"name\": \"Jane Doe\",\n    \"email\": \"jane.doe@gmail.com\",\n    \"reservationType\": \"reserve\",\n    \"preferences\": [\"Center\"]\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/reservations",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "reservations"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Cancel Reservations",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"tableId\": \"T001\",\n    \"customerId\": \"C101\",\n    \"reservationType\": \"cancel\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/reservations",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "reservations"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Customers",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/reservations/customers",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "reservations",
+                "customers"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Waitlists",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/reservations/waitlists",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "reservations",
+                "waitlists"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Reservations",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/reservations",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "reservations"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    }
+  ],
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": ""
+    },
+    {
+      "key": "tableServiceUrl",
+      "value": ""
+    }
+  ]
+}
