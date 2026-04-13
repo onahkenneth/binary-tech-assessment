@@ -1,4 +1,3 @@
-import index from '~/public/index.html';
 import type { ReservationRequest } from './types/model';
 import { ReservationService } from './service/reservation.service';
 import type { BunRequest } from 'bun';
@@ -6,7 +5,6 @@ import { fail, ok } from './helpers/responses';
 import { NotFoundError, ValidationError } from './helpers/error';
 
 export default {
-    "/": index,
     "/reservations/customers": {
         GET: async () => {
             try {
