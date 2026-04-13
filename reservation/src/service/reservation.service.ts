@@ -123,7 +123,7 @@ export class ReservationService {
     async cancelReservation(request: CancelRequest): Promise<CancelResponse> {
         let response: CancelResponse;
         const { tableId, customerId } = request;
-        const reservation = await this.reservationRepository.getReservation(tableId);
+        const reservation = await this.reservationRepository.getReservationByTable(tableId);
 
         if (!reservation) {
             throw new NotFoundError(`No reservation for table: ${tableId} found`);
@@ -169,7 +169,7 @@ export class ReservationService {
             }
             // No one in the waitlist, make table available
             this.serviceClient.updateAvailability(tableId, true);
-            this.reservationRepository.delete(tableId);
+            this.reservationRepository.delete(reservation.reservationId);
         }
 
         return response;
