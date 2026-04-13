@@ -1,4 +1,4 @@
-import { pgTable, varchar, text, pgEnum, primaryKey } from "drizzle-orm/pg-core";
+import { pgTable, varchar, text, pgEnum, primaryKey, timestamp } from "drizzle-orm/pg-core";
 
 export const statusTypeEnum = pgEnum("status_type", ["confirmed", "waitlisted", "canceled"]);
 
@@ -19,8 +19,11 @@ export const reservations = pgTable("reservations", {
 
 export const waitlists = pgTable("waitlists", {
     tableId: varchar("table_id").notNull(),
-    customerId: varchar("customer_id").notNull().references(() => customers.customerId),
+    customerId: varchar("customer_id")
+        .notNull()
+        .references(() => customers.customerId),
     preferences: text("preferences").array().notNull().default([]),
+    createdAt: timestamp("created_at").notNull().defaultNow(),
 }, (table) => ({
     pk: primaryKey({ columns: [table.tableId, table.customerId] }),
 }));

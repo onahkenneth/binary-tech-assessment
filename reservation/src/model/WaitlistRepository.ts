@@ -1,4 +1,4 @@
-import { and, eq } from "drizzle-orm";
+import { and, desc, eq } from "drizzle-orm";
 import { db } from "../db";
 import { waitlists } from "../db/schema";
 import type { WaitlistStore, CustomerQueue } from "../types/model";
@@ -14,7 +14,9 @@ export class WaitlistRepository {
     }
 
     async getWaitlists(): Promise<WaitlistStore[]> {
-        const rows = await db.select().from(waitlists);
+        const rows = await db.select()
+            .from(waitlists)
+            .orderBy(desc(waitlists.createdAt));
 
         return this.groupByTable(rows);
     }
@@ -23,7 +25,8 @@ export class WaitlistRepository {
         const rows = await db
             .select()
             .from(waitlists)
-            .where(eq(waitlists.tableId, tableId));
+            .where(eq(waitlists.tableId, tableId))
+            .orderBy(desc(waitlists.createdAt));
 
         if (rows.length === 0) return null;
 

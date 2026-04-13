@@ -1,0 +1,2 @@
+ALTER TABLE "waitlists" ADD CONSTRAINT "waitlists_table_id_customer_id_pk" PRIMARY KEY("table_id","customer_id");--> statement-breakpoint
+ALTER TABLE "waitlists" ADD COLUMN "created_at" timestamp DEFAULT now() NOT NULL;
