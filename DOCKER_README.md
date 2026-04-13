@@ -29,7 +29,7 @@ Each service has its own `.env.docker` file:
 
 ## Accessing the Services
 
-- Table Availability Service: http://localhost:3002
+- Table Availability Service: http://localhost:3000
 - Reservation Service: http://localhost:3001
 
 ## Stopping the Services
@@ -49,5 +49,5 @@ The full docker-compose.yml includes health checks for both services. The Reserv
 If you encounter any issues:
 
 1. Make sure Docker is running on your system
-2. Check that the ports 3001 and 3002 are not being used by other applications
+2. Check that the ports 3000 and 3001 are not being used by other applications
 3. Clear Docker cache if needed: `docker system prune -a`
