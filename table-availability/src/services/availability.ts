@@ -1,5 +1,5 @@
 import type { BunRequest } from "bun";
-import { TableRepository } from "../repositories/TableRepository";
+import { TableRepository } from "../model/TableRepository";
 import type { Table } from "../types/model";
 import { NotFoundError } from "../helpers/error";
 
@@ -19,7 +19,7 @@ export class AvailabilityService {
         return AvailabilityService.instance;
     }
 
-    async getTables(): Promise<Record<string, Table>> {
+    async getTables(): Promise<Table[]> {
         return await this.tableRepository.getTables();
     }
 

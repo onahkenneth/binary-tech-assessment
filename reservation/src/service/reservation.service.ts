@@ -1,15 +1,17 @@
-import { CustomerRepository } from "../repositories/CustomerRepository";
-import { ReservationRepository } from "../repositories/ReservationRepository";
+import { CustomerRepository } from "../model/CustomerRepository";
+import { ReservationRepository } from "../model/ReservationRepository";
 import { ReservationType, StatusType } from "../types/model";
 import type {
     CancelRequest,
     CancelResponse,
+    Customer,
     CustomerQueue,
     Reservation,
     ReservationRequest,
-    ReservationResponse
+    ReservationResponse,
+    WaitlistStore
 } from "../types/model";
-import { WaitlistRepository } from "../repositories/WaitlistRepository";
+import { WaitlistRepository } from "../model/WaitlistRepository";
 import { TableServiceClient } from "./table.service";
 import { NotFoundError, ValidationError } from "../helpers/error";
 
@@ -34,15 +36,15 @@ export class ReservationService {
         return ReservationService.instance;
     }
 
-    async getCustomers() {
+    async getCustomers(): Promise<Customer[]> {
         return this.customerRepository.getCustomers()
     }
 
-    async getWaitlists() {
+    async getWaitlists(): Promise<WaitlistStore[]> {
         return this.waitlistRepository.getWaitlists()
     }
 
-    async getReservations() {
+    async getReservations(): Promise<Reservation[]> {
         return this.reservationRepository.getReservations()
     }
 
@@ -89,10 +91,10 @@ export class ReservationService {
         }
 
         const table = result.data;
+        this.customerRepository.save({ customerId, name, email });
 
         if (table.available) {
             this.serviceClient.updateAvailability(tableId, false)
-            this.customerRepository.save({ customerId, name, email });
 
             const reservationId = crypto.randomUUID()
             const data = {
@@ -121,7 +123,7 @@ export class ReservationService {
     async cancelReservation(request: CancelRequest): Promise<CancelResponse> {
         let response: CancelResponse;
         const { tableId, customerId } = request;
-        const reservation = await this.reservationRepository.getReservation(tableId);
+        const reservation = await this.reservationRepository.getReservationByTable(tableId);
 
         if (!reservation) {
             throw new NotFoundError(`No reservation for table: ${tableId} found`);
@@ -167,7 +169,7 @@ export class ReservationService {
             }
             // No one in the waitlist, make table available
             this.serviceClient.updateAvailability(tableId, true);
-            this.reservationRepository.delete(tableId);
+            this.reservationRepository.delete(reservation.reservationId);
         }
 
         return response;

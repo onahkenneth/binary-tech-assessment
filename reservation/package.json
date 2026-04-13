@@ -2,7 +2,8 @@
     "name": "reservation",
     "module": "index.ts",
     "devDependencies": {
-        "@types/bun": "latest"
+        "@types/bun": "latest",
+        "drizzle-kit": "^0.31.10"
     },
     "peerDependencies": {
         "typescript": "^5"
@@ -13,7 +14,16 @@
         "clean": "rm -rf dist && echo 'Done.'",
         "dev": "bun src/server.ts",
         "watch": "bun --watch run dev",
-        "build": "bun build src/server.ts --production --outdir=dist --target=bun"
+        "build": "bun build src/server.ts --production --outdir=dist --target=bun",
+        "docker-start": "bun run setup && bun run start",
+        "setup": "bun run db:migrate && bun run db:seed",
+        "db:generate": "bunx drizzle-kit generate --config=drizzle.config.ts",
+        "db:migrate": "bun src/db/migrate.ts",
+        "db:seed": "bun src/db/seed.ts"
     },
-    "type": "module"
+    "type": "module",
+    "dependencies": {
+        "drizzle-orm": "^0.45.2",
+        "postgres": "^3.4.9"
+    }
 }
