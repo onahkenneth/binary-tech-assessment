@@ -82,6 +82,8 @@ export class ReservationService {
         const { tableId, customerId, name, email, preferences } = request;
         const result = await this.serviceClient.getTable(tableId);
 
+        console.log(`table data: ${JSON.stringify(result)}`);
+
         if (result.error) {
             throw new NotFoundError(result.error);
         }
@@ -132,6 +134,7 @@ export class ReservationService {
         }
 
         const result = await this.serviceClient.getTable(tableId);
+        console.log(`table data: ${result}`);
 
         if (result.error) {
             throw new NotFoundError(result.error);
