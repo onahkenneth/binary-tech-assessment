@@ -58,7 +58,7 @@ build:table-service:
   <<: *docker_login
   script:
     - docker build -t $TABLE_SERVICE_IMAGE:$CI_COMMIT_SHA -t $TABLE_SERVICE_IMAGE:latest ./table-availability
-    - docker save $TABLE_SERVICE_IMAGE:$CI_COMMIT_SHA > table-service.tar
+    - docker save $TABLE_SERVICE_IMAGE:$CI_COMMIT_SHA $TABLE_SERVICE_IMAGE:latest > table-service.tar
   artifacts:
     paths:
       - table-service.tar
@@ -75,7 +75,7 @@ build:reservation-service:
   <<: *docker_login
   script:
     - docker build -t $RESERVATION_SERVICE_IMAGE:$CI_COMMIT_SHA -t $RESERVATION_SERVICE_IMAGE:latest ./reservation
-    - docker save $RESERVATION_SERVICE_IMAGE:$CI_COMMIT_SHA > reservation-service.tar
+    - docker save $RESERVATION_SERVICE_IMAGE:$CI_COMMIT_SHA $RESERVATION_SERVICE_IMAGE:latest > reservation-service.tar
   artifacts:
     paths:
       - reservation-service.tar
