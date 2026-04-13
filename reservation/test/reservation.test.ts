@@ -4,6 +4,7 @@ import {
     ReservationType,
     StatusType,
     type CancelResponse,
+    type Customer,
     type CustomerQueue,
     type ReservationRequest,
     type ReservationResponse,
@@ -23,6 +24,30 @@ import {
  *   - fulfils next waitlist reservation on cancellation when waitlist is not empty
  *   - updates table availability on cancellation when waitlist is empty
  */
+
+// --- Mock CustomerRepository ---
+
+const mockCustomers: Record<string, Customer> = {
+    "C001": { customerId: "C001", name: "Jane Doe", email: "jane.doe@example.com" },
+    "C002": { customerId: "C002", name: "John Doe", email: "john.doe@example.com" },
+    "C003": { customerId: "C003", name: "Bob Brown", email: "bob.brown@example.com" },
+};
+
+mock.module("~/src/model/CustomerRepository", () => ({
+    CustomerRepository: {
+        getInstance: () => ({
+            getCustomer: async (customerId: string): Promise<Customer | null> => {
+                return mockCustomers[customerId] ?? null;
+            },
+            getCustomers: async (): Promise<Customer[]> => {
+                return Object.values(mockCustomers);
+            },
+            save: async (customer: Customer): Promise<void> => {
+                mockCustomers[customer.customerId] = customer;
+            },
+        }),
+    },
+}));
 
 const BASE_URL = "http://localhost:3000";
 
