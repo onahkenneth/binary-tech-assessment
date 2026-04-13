@@ -1,0 +1,149 @@
+stages:
+  - test
+  - build
+  - publish
+  # - deploy
+
+variables:
+  DOCKER_REGISTRY: registry.gitlab.com
+  IMAGE_PREFIX: $DOCKER_REGISTRY/$CI_PROJECT_PATH
+  TABLE_SERVICE_IMAGE: $IMAGE_PREFIX/table-availability
+  RESERVATION_SERVICE_IMAGE: $IMAGE_PREFIX/reservation
+  DOCKER_TLS_CERTDIR: "/certs"
+
+# --- Templates ---
+
+.docker_login: &docker_login
+  before_script:
+    - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $DOCKER_REGISTRY
+
+.gcloud_setup: &gcloud_setup
+  before_script:
+    - echo $GCLOUD_SERVICE_KEY | base64 -d > /tmp/gcloud-key.json
+    - gcloud auth activate-service-account --key-file=/tmp/gcloud-key.json
+    - gcloud config set project $GCLOUD_PROJECT_ID
+    - gcloud container clusters get-credentials $GKE_CLUSTER --region $GKE_REGION
+
+# --- Test ---
+
+test:table-service:
+  stage: test
+  image: oven/bun:1
+  script:
+    - cd table-availability
+    - bun install
+    - bun test
+  rules:
+    - changes:
+        - table-availability/**/*
+
+test:reservation-service:
+  stage: test
+  image: oven/bun:1
+  script:
+    - cd reservation
+    - bun install
+    - bun test
+  rules:
+    - changes:
+        - reservation/**/*
+
+# --- Build ---
+
+build:table-service:
+  stage: build
+  image: docker:24
+  services:
+    - docker:24-dind
+  <<: *docker_login
+  script:
+    - docker build -t $TABLE_SERVICE_IMAGE:$CI_COMMIT_SHA -t $TABLE_SERVICE_IMAGE:latest ./table-availability
+    - docker save $TABLE_SERVICE_IMAGE:$CI_COMMIT_SHA > table-service.tar
+  artifacts:
+    paths:
+      - table-service.tar
+    expire_in: 1 hour
+  rules:
+    - changes:
+        - table-availability/**/*
+
+build:reservation-service:
+  stage: build
+  image: docker:24
+  services:
+    - docker:24-dind
+  <<: *docker_login
+  script:
+    - docker build -t $RESERVATION_SERVICE_IMAGE:$CI_COMMIT_SHA -t $RESERVATION_SERVICE_IMAGE:latest ./reservation
+    - docker save $RESERVATION_SERVICE_IMAGE:$CI_COMMIT_SHA > reservation-service.tar
+  artifacts:
+    paths:
+      - reservation-service.tar
+    expire_in: 1 hour
+  rules:
+    - changes:
+        - reservation/**/*
+
+# --- Publish ---
+
+publish:table-service:
+  stage: publish
+  image: docker:24
+  services:
+    - docker:24-dind
+  <<: *docker_login
+  script:
+    - docker load < table-service.tar
+    - docker push $TABLE_SERVICE_IMAGE:$CI_COMMIT_SHA
+    - docker push $TABLE_SERVICE_IMAGE:latest
+  needs:
+    - build:table-service
+  rules:
+    - changes:
+        - table-availability/**/*
+
+publish:reservation-service:
+  stage: publish
+  image: docker:24
+  services:
+    - docker:24-dind
+  <<: *docker_login
+  script:
+    - docker load < reservation-service.tar
+    - docker push $RESERVATION_SERVICE_IMAGE:$CI_COMMIT_SHA
+    - docker push $RESERVATION_SERVICE_IMAGE:latest
+  needs:
+    - build:reservation-service
+  rules:
+    - changes:
+        - reservation/**/*
+
+# --- Deploy ---
+
+# deploy:table-service:
+#   stage: deploy
+#   image: google/cloud-sdk:alpine
+#   <<: *gcloud_setup
+#   script:
+#     - kubectl set image deployment/table-service table-service=$TABLE_SERVICE_IMAGE:$CI_COMMIT_SHA -n $K8S_NAMESPACE
+#     - kubectl rollout status deployment/table-service -n $K8S_NAMESPACE
+#   needs:
+#     - publish:table-service
+#   rules:
+#     - if: $CI_COMMIT_BRANCH == "main"
+#       changes:
+#         - table-availability/**/*
+
+# deploy:reservation-service:
+#   stage: deploy
+#   image: google/cloud-sdk:alpine
+#   <<: *gcloud_setup
+#   script:
+#     - kubectl set image deployment/reservation-service reservation-service=$RESERVATION_SERVICE_IMAGE:$CI_COMMIT_SHA -n $K8S_NAMESPACE
+#     - kubectl rollout status deployment/reservation-service -n $K8S_NAMESPACE
+#   needs:
+#     - publish:reservation-service
+#   rules:
+#     - if: $CI_COMMIT_BRANCH == "main"
+#       changes:
+#         - reservation/**/*
