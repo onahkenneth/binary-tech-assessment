@@ -1,5 +1,5 @@
 import { test, expect } from "bun:test";
-import { TableRepository } from "~/src/repositories/TableRepository";
+import { TableRepository } from "~/src/model/TableRepository";
 
 /**
  * Unit Tests — Pure Functions
