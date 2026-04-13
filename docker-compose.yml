@@ -5,6 +5,11 @@ services:
       - ./table-availability/.env.docker
     ports:
       - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U table_user -d table_db"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
     volumes:
       - table-db-data:/var/lib/postgresql/data
 
@@ -14,6 +19,11 @@ services:
       - ./reservation/.env.docker
     ports:
       - "5433:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U reservation_user -d reservation_db"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
     volumes:
       - reservation-db-data:/var/lib/postgresql/data
 
@@ -25,7 +35,8 @@ services:
     env_file:
       - ./table-availability/.env.docker
     depends_on:
-      - table-db
+      table-db:
+        condition: service_healthy
 
   reservation-service:
     build:
@@ -35,8 +46,10 @@ services:
     env_file:
       - ./reservation/.env.docker
     depends_on:
-      - reservation-db
-      - table-service
+      reservation-db:
+        condition: service_healthy
+      table-service:
+        condition: service_started
 
 volumes:
   table-db-data:
