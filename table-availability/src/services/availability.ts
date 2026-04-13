@@ -24,7 +24,13 @@ export class AvailabilityService {
     }
 
     async getTable(tableId: string): Promise<Table | null> {
-        return await this.tableRepository.getTable(tableId);
+        const table = await this.tableRepository.getTable(tableId);
+
+        if (!table) {
+            throw new NotFoundError("Table not found");
+        }
+
+        return table;
     }
 
     async updateAvailability(request: BunRequest): Promise<void> {

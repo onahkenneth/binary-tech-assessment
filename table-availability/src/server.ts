@@ -6,10 +6,11 @@ const server = serve({
   routes: routes,
   async fetch(req: BunRequest) {
     const url = new URL(req.url);
-    const file = Bun.file(`./public${url.pathname}`);
+    const pathname = url.pathname === "/" ? "/index.html" : url.pathname;
+    const file = Bun.file(`./public${pathname}`);
     
     if (await file.exists()) {
-        return new Response(file);
+      return new Response(file);
     }
     
     return new Response("Not Found", { status: 404 });
